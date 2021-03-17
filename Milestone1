@@ -1,0 +1,24 @@
+rest2.STREET.hist()
+plt.title("Histogram of Street")
+plt.xlabel("Streets")
+plt.ylabel("Camis")
+
+rest2.SCORE.hist()
+plt.title("Histogram of Scores")
+plt.xlabel("Scores")
+plt.ylabel("Camis")
+
+rest2.DBA.hist()
+plt.title("Histogram of DBA")
+plt.xlabel("DBA")
+plt.ylabel("Camis")
+
+rest2.INSPECTION_DATE.hist()
+plt.title("Histogram of Inspection Date")
+plt.xabel("Inspection Date")
+plt.ylabel("Camis")
+
+rest2.ZIPCODE.hist()
+plt.title("Histogram of Zipcode")
+plt.xlabel("Zipcode")
+plt.ylabel("Camis")
