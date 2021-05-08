@@ -1,0 +1,66 @@
+rest2_new = pd.get_dummies(restaurants, columns = ["GRADE"], drop_first = True)
+rest2_new.head()
+
+x = rest2_new.drop(columns=["GRADE_B"])
+x.head()
+y = rest2_new["GRADE_B"]
+y.head()
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+
+---------  The first prediction model I used was the linear regression model. I used specifically whhich part of the data got a B for a grade and from there picked CAMIS as the y value since it would give each restaurant an identiyfing number. I added "BORO as my hue parameter, and it was very confusing as most of the data was from Manhattan, which shows Manhattan thrives having most restaurants, so that was what mostly seem, apart from some little specks here and there signifying the other Boroughs, one being The Bronx. 
+
+rest_lin_model = LinearRegression()
+rest_lin_model.fit(rest2_new[["GRADE_B"]],rest2_new["CAMIS"])
+
+lin_model = rest_lin_model.predict(rest2_new[["CAMIS"]])
+sns.relplot(x="GRADE_B",y="CAMIS",hue="BORO",data=rest2_new)
+plt.plot(rest2_new[["GRADE_B"]],lin_model)
+
+
+------------ The second prediction model I used was the polynomial regression model. The parameter I added was order = 2 so as much data as before was not displayed as it would not be able to be shown completely if let without that. The model is not as good because it does not give as clear of a pattern trend in the graph as a linear model would. In order to predict we need the data displayed and giving us a clear trend. 
+
+polynomial_features = PolynomialFeatures(degree=2)
+length1_poly2 = polynomial_features.fit_transform(rest2_new[["CAMIS"]])
+
+rest_poly2_model = LinearRegression()
+rest_poly2_model.fit(length1_poly2,rest2_new["CAMIS"])
+rest_poly2_pred = rest_poly2_model.predict(length1_poly2)
+
+sns.regplot(x="GRADE_B",y="CAMIS",order=2,data=rest2_new)
+
+----------- The last prediciton used was KNEARESTNEIGHBOR. I looked at the GRADE DATE and broke it up between month and year and then looked at the actual GRADES received. For the data, KNN isn't my favorite since it makes the point too clustered together and since there is a lot of information that needs to be plotted, it does not look as good. 
+rest2.columns
+
+rest2.dropna(inplace=True)
+rest2.dtypes
+rest2.head()
+
+rest2['GRADE DATE'] = pd.to_datetime(rest2['GRADE DATE'])
+
+rest2['MONTH'] = rest2['GRADE DATE'].dt.month
+rest2['YEAR']=rest2['GRADE DATE'].dt.year
+
+rest2=pd.get_dummies(rest2,columns=['CAMIS', 'DBA', 'BORO', 'BUILDING', 'STREET', 'ZIPCODE', 'PHONE',
+       'CUISINE DESCRIPTION', 'INSPECTION DATE', 'ACTION', 'VIOLATION CODE',
+       'VIOLATION DESCRIPTION', 'CRITICAL FLAG', 'SCORE', 'GRADE',
+       'GRADE DATE', 'RECORD DATE', 'INSPECTION TYPE'])
+       
+x=rest2.drop(columns=["GRADE"])
+
+y = rest2["GRADE"]
+
+x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.2)
+x_train
+
+knn = KNeighborsRegressor(n_neighbors = 7)
+knn.fit(x_train, y_train)
+
+y_test_pred = knn.predict(x_test)
+
+mean_squared_error(y_test_pred, y_test)
+
+y_train_pred=knn.predict(x_train)
+mean_squared_error(y_train_pred, y_train)
+
+plt.scatter(y_test, y_test - y_test_pred, alpha = 0.5)
